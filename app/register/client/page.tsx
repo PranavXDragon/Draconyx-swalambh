@@ -31,8 +31,13 @@ export default function ClientRegisterPage() {
   
   // Step 4: Terms
   const [acceptTerms, setAcceptTerms] = useState(false);
-
+  
+  // OTP Verification
   const [currentStep, setCurrentStep] = useState(1);
+  const [otpSent, setOtpSent] = useState(false);
+  const [generatedEmailOtp, setGeneratedEmailOtp] = useState('');
+  const [enteredEmailOtp, setEnteredEmailOtp] = useState('');
+  const [emailOtpError, setEmailOtpError] = useState('');
 
   const handlePartTypeToggle = (type: string) => {
     setPartTypes(prev => 
@@ -50,26 +55,51 @@ export default function ClientRegisterPage() {
       return;
     }
 
-    const mockUser = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: fullName,
-      email,
-      role: 'client' as const,
-      company: workingType === 'company' ? companyName : undefined,
-      workingType,
-      designation,
-      mobile,
-      industryType,
-      partTypes,
-      urgentSupport: urgentSupport === 'yes',
-    };
-
-    setUser(mockUser);
-    document.cookie = `user=${JSON.stringify(mockUser)}; path=/`;
-    window.location.href = '/client/dashboard';
+    // Generate and "send" OTP to email
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedEmailOtp(emailOtp);
+    setOtpSent(true);
+    setCurrentStep(5); // Move to OTP verification step
+    
+    console.log('Email OTP sent to', email, ':', emailOtp);
+    alert(`OTP sent to ${email}: ${emailOtp} (This is a demo)`);
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4));
+  const handleVerifyOtp = () => {
+    if (enteredEmailOtp === generatedEmailOtp) {
+      // OTP verified, create user and redirect
+      const mockUser = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: fullName,
+        email,
+        role: 'client' as const,
+        company: workingType === 'company' ? companyName : undefined,
+        workingType,
+        designation,
+        mobile,
+        industryType,
+        partTypes,
+        urgentSupport: urgentSupport === 'yes',
+      };
+
+      setUser(mockUser);
+      document.cookie = `user=${JSON.stringify(mockUser)}; path=/`;
+      window.location.href = '/client/dashboard';
+    } else {
+      setEmailOtpError('Invalid OTP. Please try again.');
+    }
+  };
+
+  const handleResendOtp = () => {
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedEmailOtp(emailOtp);
+    setEnteredEmailOtp('');
+    setEmailOtpError('');
+    console.log('Email OTP resent to', email, ':', emailOtp);
+    alert(`New OTP sent to ${email}: ${emailOtp} (This is a demo)`);
+  };
+
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 5));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const partTypeOptions = [
@@ -143,14 +173,14 @@ export default function ClientRegisterPage() {
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-slate-900">Client Registration</h2>
             <p className="mt-2 text-sm text-slate-600">
-              Step {currentStep} of 4
+              Step {currentStep} of 5
             </p>
             
             {/* Progress Bar */}
             <div className="mt-4 w-full bg-slate-200 rounded-full h-2">
               <div 
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(currentStep / 4) * 100}%` }}
+                style={{ width: `${(currentStep / 5) * 100}%` }}
               />
             </div>
           </div>
@@ -428,6 +458,69 @@ export default function ClientRegisterPage() {
                   <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">
                     Submit Registration
                   </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: OTP Verification */}
+            {currentStep === 5 && (
+              <div className="space-y-5">
+                <div className="text-center mb-6">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 mx-auto mb-4">
+                    <span className="text-3xl">�</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Verify Your Email</h3>
+                  <p className="text-sm text-slate-600">
+                    We've sent a 6-digit OTP to <span className="font-medium">{email}</span>
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="emailOtp">Enter OTP *</Label>
+                  <Input
+                    id="emailOtp"
+                    value={enteredEmailOtp}
+                    onChange={(e) => {
+                      setEnteredEmailOtp(e.target.value);
+                      setEmailOtpError('');
+                    }}
+                    placeholder="Enter 6-digit OTP"
+                    maxLength={6}
+                    className="text-center text-2xl tracking-widest"
+                    autoFocus
+                  />
+                  {emailOtpError && (
+                    <p className="text-sm text-red-600">{emailOtpError}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  disabled={enteredEmailOtp.length !== 6}
+                >
+                  Verify OTP & Complete Registration
+                </Button>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    Resend OTP
+                  </button>
+                </div>
+
+                <div className="text-center pt-4 border-t border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(4)}
+                    className="text-sm text-slate-600 hover:text-slate-900"
+                  >
+                    ← Back to review
+                  </button>
                 </div>
               </div>
             )}

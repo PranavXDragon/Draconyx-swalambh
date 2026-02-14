@@ -22,33 +22,63 @@ export default function DeliveryRegisterPage() {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
   const [password, setPassword] = useState('');
+  
+  // OTP Verification
+  const [showOtpStep, setShowOtpStep] = useState(false);
+  const [generatedEmailOtp, setGeneratedEmailOtp] = useState('');
+  const [enteredEmailOtp, setEnteredEmailOtp] = useState('');
+  const [emailOtpError, setEmailOtpError] = useState('');
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const mockUser = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: fullName,
-      email,
-      role: 'delivery' as const,
-      mobile,
-      govtId: {
-        type: govtIdType,
-        number: govtIdNumber,
-      },
-      vehicleNumber,
-      age: parseInt(age),
-      gender,
-      location: {
-        lat: 19.0760,
-        lng: 72.8777,
-        address: 'Mumbai, Maharashtra',
-      },
-    };
+    // Generate and "send" OTP to email
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedEmailOtp(emailOtp);
+    setShowOtpStep(true);
+    
+    console.log('Email OTP sent to', email, ':', emailOtp);
+    alert(`OTP sent to ${email}: ${emailOtp} (This is a demo)`);
+  };
 
-    setUser(mockUser);
-    document.cookie = `user=${JSON.stringify(mockUser)}; path=/`;
-    window.location.href = '/delivery/dashboard';
+  const handleVerifyOtp = () => {
+    if (enteredEmailOtp === generatedEmailOtp) {
+      // OTP verified, create user and redirect
+      const mockUser = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: fullName,
+        email,
+        role: 'delivery' as const,
+        mobile,
+        govtId: {
+          type: govtIdType,
+          number: govtIdNumber,
+        },
+        vehicleNumber,
+        age: parseInt(age),
+        gender,
+        location: {
+          lat: 19.0760,
+          lng: 72.8777,
+          address: 'Mumbai, Maharashtra',
+        },
+      };
+
+      setUser(mockUser);
+      document.cookie = `user=${JSON.stringify(mockUser)}; path=/`;
+      window.location.href = '/delivery/dashboard';
+    } else {
+      setEmailOtpError('Invalid OTP. Please try again.');
+    }
+  };
+
+  const handleResendOtp = () => {
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedEmailOtp(emailOtp);
+    setEnteredEmailOtp('');
+    setEmailOtpError('');
+    console.log('Email OTP resent to', email, ':', emailOtp);
+    alert(`New OTP sent to ${email}: ${emailOtp} (This is a demo)`);
   };
 
   return (
@@ -129,10 +159,11 @@ export default function DeliveryRegisterPage() {
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-slate-900">Delivery Partner Registration</h2>
             <p className="mt-2 text-sm text-slate-600">
-              Complete your profile to start delivering
+              {showOtpStep ? 'Verify your mobile number' : 'Complete your profile to start delivering'}
             </p>
           </div>
 
+          {!showOtpStep ? (
           <form onSubmit={handleRegister} className="space-y-5">
             {/* Full Name */}
             <div className="space-y-2">
@@ -301,6 +332,67 @@ export default function DeliveryRegisterPage() {
               Register as Delivery Partner
             </Button>
           </form>
+          ) : (
+            <div className="space-y-5">
+              <div className="text-center mb-6">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mx-auto mb-4">
+                  <span className="text-3xl">�</span>
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">Verify Your Email</h3>
+                <p className="text-sm text-slate-600">
+                  We've sent a 6-digit OTP to <span className="font-medium">{email}</span>
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="emailOtp">Enter OTP *</Label>
+                <Input
+                  id="emailOtp"
+                  value={enteredEmailOtp}
+                  onChange={(e) => {
+                    setEnteredEmailOtp(e.target.value);
+                    setEmailOtpError('');
+                  }}
+                  placeholder="Enter 6-digit OTP"
+                  maxLength={6}
+                  className="text-center text-2xl tracking-widest"
+                  autoFocus
+                />
+                {emailOtpError && (
+                  <p className="text-sm text-red-600">{emailOtpError}</p>
+                )}
+              </div>
+
+              <Button
+                type="button"
+                onClick={handleVerifyOtp}
+                className="w-full bg-green-600 hover:bg-green-700"
+                disabled={enteredEmailOtp.length !== 6}
+              >
+                Verify OTP & Complete Registration
+              </Button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  className="text-sm text-green-600 hover:text-green-700 font-medium"
+                >
+                  Resend OTP
+                </button>
+              </div>
+
+              <div className="text-center pt-4 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setShowOtpStep(false)}
+                  className="text-sm text-slate-600 hover:text-slate-900"
+                >
+                  ← Back to form
+                </button>
+              </div>
+            </div>
+          )}
 
           <p className="mt-6 text-center text-sm text-slate-600">
             Already have an account?{' '}

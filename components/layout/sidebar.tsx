@@ -12,7 +12,7 @@ interface SidebarProps {
     label: string;
     icon: LucideIcon;
   }[];
-  role: 'supplier' | 'business' | 'client';
+  role: 'supplier' | 'business' | 'client' | 'delivery';
 }
 
 export function Sidebar({ links, role }: SidebarProps) {
@@ -23,6 +23,7 @@ export function Sidebar({ links, role }: SidebarProps) {
     supplier: 'bg-orange-600',
     business: 'bg-purple-600',
     client: 'bg-blue-600',
+    delivery: 'bg-green-600',
   };
 
   return (

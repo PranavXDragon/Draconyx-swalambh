@@ -41,8 +41,13 @@ export default function BusinessRegisterPage() {
   
   // Step 7: Terms
   const [acceptTerms, setAcceptTerms] = useState(false);
-
+  
+  // OTP Verification
   const [currentStep, setCurrentStep] = useState(1);
+  const [otpSent, setOtpSent] = useState(false);
+  const [generatedEmailOtp, setGeneratedEmailOtp] = useState('');
+  const [enteredEmailOtp, setEnteredEmailOtp] = useState('');
+  const [emailOtpError, setEmailOtpError] = useState('');
 
   const handleGetLocation = () => {
     if (navigator.geolocation) {
@@ -66,29 +71,54 @@ export default function BusinessRegisterPage() {
       return;
     }
 
-    const mockUser = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: fullName,
-      email: officialEmail,
-      role: 'business' as const,
-      company: companyName,
-      industryType,
-      gstNumber,
-      location: {
-        lat: parseFloat(latitude),
-        lng: parseFloat(longitude),
-        address: `${city}, ${state} - ${pincode}`,
-      },
-      mobile,
-      numberOfPlants: parseInt(numberOfPlants),
-    };
-
-    setUser(mockUser);
-    document.cookie = `user=${JSON.stringify(mockUser)}; path=/`;
-    window.location.href = '/business/dashboard';
+    // Generate and "send" OTP to email
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedEmailOtp(emailOtp);
+    setOtpSent(true);
+    setCurrentStep(8); // Move to OTP verification step
+    
+    console.log('Email OTP sent to', officialEmail, ':', emailOtp);
+    alert(`OTP sent to ${officialEmail}: ${emailOtp} (This is a demo)`);
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 7));
+  const handleVerifyOtp = () => {
+    if (enteredEmailOtp === generatedEmailOtp) {
+      // OTP verified, create user and redirect
+      const mockUser = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: fullName,
+        email: officialEmail,
+        role: 'business' as const,
+        company: companyName,
+        industryType,
+        gstNumber,
+        location: {
+          lat: parseFloat(latitude),
+          lng: parseFloat(longitude),
+          address: `${city}, ${state} - ${pincode}`,
+        },
+        mobile,
+        numberOfPlants: parseInt(numberOfPlants),
+      };
+
+      setUser(mockUser);
+      document.cookie = `user=${JSON.stringify(mockUser)}; path=/`;
+      window.location.href = '/business/dashboard';
+    } else {
+      setEmailOtpError('Invalid OTP. Please try again.');
+    }
+  };
+
+  const handleResendOtp = () => {
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedEmailOtp(emailOtp);
+    setEnteredEmailOtp('');
+    setEmailOtpError('');
+    console.log('Email OTP resent to', officialEmail, ':', emailOtp);
+    alert(`New OTP sent to ${officialEmail}: ${emailOtp} (This is a demo)`);
+  };
+
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 8));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   return (
@@ -151,14 +181,14 @@ export default function BusinessRegisterPage() {
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-slate-900">Business Registration</h2>
             <p className="mt-2 text-sm text-slate-600">
-              Step {currentStep} of 7
+              Step {currentStep} of 8
             </p>
             
             {/* Progress Bar */}
             <div className="mt-4 w-full bg-slate-200 rounded-full h-2">
               <div 
                 className="bg-purple-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(currentStep / 7) * 100}%` }}
+                style={{ width: `${(currentStep / 8) * 100}%` }}
               />
             </div>
           </div>
@@ -509,6 +539,69 @@ export default function BusinessRegisterPage() {
                   <Button type="submit" className="flex-1 bg-purple-600 hover:bg-purple-700">
                     Submit Registration
                   </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 8: OTP Verification */}
+            {currentStep === 8 && (
+              <div className="space-y-5">
+                <div className="text-center mb-6">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 mx-auto mb-4">
+                    <span className="text-3xl">�</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Verify Your Email</h3>
+                  <p className="text-sm text-slate-600">
+                    We've sent a 6-digit OTP to <span className="font-medium">{officialEmail}</span>
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="emailOtp">Enter OTP *</Label>
+                  <Input
+                    id="emailOtp"
+                    value={enteredEmailOtp}
+                    onChange={(e) => {
+                      setEnteredEmailOtp(e.target.value);
+                      setEmailOtpError('');
+                    }}
+                    placeholder="Enter 6-digit OTP"
+                    maxLength={6}
+                    className="text-center text-2xl tracking-widest"
+                    autoFocus
+                  />
+                  {emailOtpError && (
+                    <p className="text-sm text-red-600">{emailOtpError}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                  disabled={enteredEmailOtp.length !== 6}
+                >
+                  Verify OTP & Complete Registration
+                </Button>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                  >
+                    Resend OTP
+                  </button>
+                </div>
+
+                <div className="text-center pt-4 border-t border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(7)}
+                    className="text-sm text-slate-600 hover:text-slate-900"
+                  >
+                    ← Back to review
+                  </button>
                 </div>
               </div>
             )}
