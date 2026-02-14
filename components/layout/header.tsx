@@ -39,8 +39,16 @@ export function Header() {
         {user && (
           <Link href={`/${user.role}/profile`}>
             <button className="flex items-center space-x-2 rounded-lg p-2 hover:bg-slate-100 transition-colors">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900">
-                <User className="h-5 w-5 text-white" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 overflow-hidden">
+                {(user as any)?.profilePicture ? (
+                  <img 
+                    src={(user as any).profilePicture} 
+                    alt={user.name} 
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User className="h-5 w-5 text-white" />
+                )}
               </div>
               <div className="hidden md:block text-sm text-left">
                 <p className="font-medium text-slate-900">{user.name}</p>
