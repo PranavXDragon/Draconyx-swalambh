@@ -25,8 +25,7 @@ import {
 import { HeroSection } from '@/components/landing/hero-section';
 import { GallerySection } from '@/components/landing/gallery-section';
 import { InsightsSection } from '@/components/landing/insights-section';
-import { DevModePanel } from '@/components/dev-mode-panel';
-import { ChatWidget } from '@/components/chat-widget';
+
 import { Navbar } from '@/components/layout/navbar';
 
 const promoSlides = [
@@ -425,11 +424,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Dev Mode Panel - Quick Dashboard Access */}
-      <DevModePanel />
 
-      {/* Chat Widget - Customer Support */}
-      <ChatWidget />
     </div>
   );
 }

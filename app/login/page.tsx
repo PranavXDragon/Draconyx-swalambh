@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAppStore } from '@/store/app-store';
-import { DevModePanel } from '@/components/dev-mode-panel';
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -162,7 +162,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <DevModePanel />
     </div>
   );
 }

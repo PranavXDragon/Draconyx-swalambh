@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAppStore } from '@/store/app-store';
 import { UserRole } from '@/types';
-import { DevModePanel } from '@/components/dev-mode-panel';
+
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -184,7 +184,6 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <DevModePanel />
     </div>
   );
 }
