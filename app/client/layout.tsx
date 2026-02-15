@@ -4,12 +4,9 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 import { 
   LayoutDashboard, 
-  ShoppingCart, 
   Package,
-  History,
   Heart,
-  Settings,
-  Store
+  Settings
 } from 'lucide-react';
 
 export default function ClientLayout({
@@ -22,16 +19,6 @@ export default function ClientLayout({
       href: '/client/dashboard',
       label: 'Dashboard',
       icon: LayoutDashboard,
-    },
-    {
-      href: '/client/store',
-      label: 'Store',
-      icon: Store,
-    },
-    {
-      href: '/client/browse-parts',
-      label: 'Browse Parts',
-      icon: ShoppingCart,
     },
     {
       href: '/client/orders',

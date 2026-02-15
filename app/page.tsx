@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useAppStore } from '@/store/app-store';
 import { 
   Target,
   MapPin,
@@ -15,132 +14,150 @@ import {
   Gauge,
   Factory,
   Package,
-  Menu,
-  X
+  ChevronLeft,
+  ChevronRight,
+  Flame,
+  TrendingUp,
+  Headphones,
+  Rocket,
+  Star
 } from 'lucide-react';
 import { HeroSection } from '@/components/landing/hero-section';
 import { GallerySection } from '@/components/landing/gallery-section';
 import { InsightsSection } from '@/components/landing/insights-section';
 import { DevModePanel } from '@/components/dev-mode-panel';
 import { ChatWidget } from '@/components/chat-widget';
+import { Navbar } from '@/components/layout/navbar';
+
+const promoSlides = [
+  {
+    title: 'Mega Deals on Spare Parts',
+    subtitle: 'Up to 40% off on industrial components',
+    icon: Flame,
+    bg: 'from-orange-500 via-red-500 to-pink-600',
+    accent: 'bg-white/20',
+    image: '🔥',
+  },
+  {
+    title: 'Trending: Smart Automation',
+    subtitle: 'AI-powered allocation is reshaping supply chains',
+    icon: TrendingUp,
+    bg: 'from-violet-600 via-purple-600 to-indigo-700',
+    accent: 'bg-white/20',
+    image: '📈',
+  },
+  {
+    title: '24/7 Support & Service',
+    subtitle: 'Round-the-clock expert assistance for your operations',
+    icon: Headphones,
+    bg: 'from-emerald-500 via-teal-500 to-cyan-600',
+    accent: 'bg-white/20',
+    image: '🎧',
+  },
+  {
+    title: 'Lightning Fast Delivery',
+    subtitle: 'Get critical spares delivered in under 4 hours',
+    icon: Rocket,
+    bg: 'from-amber-500 via-yellow-500 to-orange-500',
+    accent: 'bg-white/20',
+    image: '🚀',
+  },
+  {
+    title: 'Top Rated by Industry',
+    subtitle: 'Trusted by 500+ factories across the nation',
+    icon: Star,
+    bg: 'from-blue-600 via-sky-500 to-cyan-400',
+    accent: 'bg-white/20',
+    image: '⭐',
+  },
+];
 
 export default function LandingPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const user = useAppStore((state) => state.user);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % promoSlides.length);
+  }, []);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + promoSlides.length) % promoSlides.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 2000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto flex h-16 md:h-20 items-center justify-between px-4 md:px-8">
-          <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-xl bg-slate-900">
-              <span className="text-base md:text-lg font-bold text-white">S</span>
-            </div>
-            <span className="text-lg md:text-xl font-bold text-slate-900">Spedly</span>
-          </div>
-          
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#how-it-works" className="text-slate-700 hover:text-slate-900 font-medium transition-colors">
-              How It Works
-            </a>
-            <a href="#features" className="text-slate-700 hover:text-slate-900 font-medium transition-colors">
-              Features
-            </a>
-            {user ? (
-              <Link href={`/${user.role}/dashboard`}>
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                  Go to Dashboard
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/login">
-                  <Button variant="ghost" className="hover:bg-slate-100">Login</Button>
-                </Link>
-                <Link href="/register">
-                  <Button className="bg-orange-500 hover:bg-orange-600 text-white">Get Started</Button>
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition"
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white">
-            <div className="flex flex-col space-y-1 px-4 py-4">
-              <a 
-                href="#how-it-works" 
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-slate-700 hover:text-slate-900 font-medium py-3 px-3 rounded-lg hover:bg-slate-100 transition-colors"
-              >
-                How It Works
-              </a>
-              <a 
-                href="#features"
-                onClick={() => setMobileMenuOpen(false)} 
-                className="text-slate-700 hover:text-slate-900 font-medium py-3 px-3 rounded-lg hover:bg-slate-100 transition-colors"
-              >
-                Features
-              </a>
-              {user ? (
-                <Link href={`/${user.role}/dashboard`} onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                    Go to Dashboard
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start hover:bg-slate-100">Login</Button>
-                  </Link>
-                  <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">Get Started</Button>
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </nav>
+      <Navbar />
 
       <HeroSection />
 
-      <section className="bg-slate-50 py-12 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-4xl font-semibold text-center text-slate-900 mb-8 md:mb-12">
-            Industrial Downtime is Expensive
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {[
-              {
-                title: 'Unplanned Machine Failure',
-                description: 'Halts production instantly.'
-              },
-              {
-                title: 'Manual Spare Procurement',
-                description: 'Delays emergency response.'
-              },
-              {
-                title: 'High Downtime Costs',
-                description: 'Losses increase every hour.'
-              }
-            ].map((item, i) => (
-              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm hover:shadow-md transition h-full">
-                <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-2 md:mb-3">{item.title}</h3>
-                <p className="text-slate-600">{item.description}</p>
-              </div>
-            ))}
+      {/* Promo Carousel */}
+      <section className="py-10 md:py-16 bg-white">
+        <div className="max-w-full mx-auto px-2 md:px-4">
+          <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+            {/* Slides */}
+            <div
+              className="flex transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {promoSlides.map((slide, i) => {
+                const SlideIcon = slide.icon;
+                return (
+                  <div
+                    key={i}
+                    className={`min-w-full bg-gradient-to-r ${slide.bg} flex flex-col md:flex-row items-center justify-between px-8 md:px-16 py-12 md:py-20 gap-6 md:gap-12`}
+                  >
+                    <div className="flex-1 text-center md:text-left">
+                      <div className={`inline-flex items-center gap-2 ${slide.accent} rounded-full px-4 py-2 mb-4`}>
+                        <SlideIcon className="h-5 w-5 text-white" />
+                        <span className="text-white text-sm font-bold uppercase tracking-wider">Featured</span>
+                      </div>
+                      <h3 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-3 md:mb-4 leading-tight">
+                        {slide.title}
+                      </h3>
+                      <p className="text-lg md:text-2xl text-white/90 font-medium">
+                        {slide.subtitle}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <div className="text-7xl md:text-9xl animate-bounce-subtle">
+                        {slide.image}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white rounded-full p-2 md:p-3 transition-all duration-200 shadow-lg"
+            >
+              <ChevronLeft className="h-5 w-5 md:h-7 md:w-7" strokeWidth={3} />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white rounded-full p-2 md:p-3 transition-all duration-200 shadow-lg"
+            >
+              <ChevronRight className="h-5 w-5 md:h-7 md:w-7" strokeWidth={3} />
+            </button>
+
+            {/* Dots */}
+            <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {promoSlides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    i === currentSlide ? 'w-8 bg-white' : 'w-2.5 bg-white/50 hover:bg-white/70'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -188,41 +205,38 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="features" className="bg-slate-50 py-12 md:py-24">
+      <section id="features" className="bg-slate-900 py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-4xl font-semibold text-center text-slate-900 mb-8 md:mb-12">
-            Built for Industrial Speed
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              {
-                icon: Target,
-                title: 'Intelligent Allocation Engine',
-                description: 'Prioritizes by urgency, distance, and stock.',
-              },
-              {
-                icon: MapPin,
-                title: 'Route Optimization',
-                description: 'Calculates fastest delivery path.',
-              },
-              {
-                icon: Truck,
-                title: 'Live Order Tracking',
-                description: 'Monitor spare movement.',
-              },
-              {
-                icon: BarChart3,
-                title: 'Downtime Analytics',
-                description: 'Measure cost impact and performance.',
-              },
+              { icon: Target, title: 'Intelligent Allocation', anim: 'animate-pulse-glow' },
+              { icon: MapPin, title: 'Route Optimization', anim: 'animate-float' },
+              { icon: Truck, title: 'Live Tracking', anim: 'animate-bounce-subtle' },
+              { icon: BarChart3, title: 'Downtime Analytics', anim: 'animate-graph-rise' },
             ].map((feature, i) => (
-              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm hover:shadow-md transition">
-                <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-orange-100 mb-3 md:mb-4">
-                  <feature.icon className="h-5 w-5 md:h-6 md:w-6 text-orange-600" />
-                </div>
-                <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-2 md:mb-3">{feature.title}</h3>
-                <p className="text-sm md:text-base text-slate-600">{feature.description}</p>
+              <div key={i} className="flex flex-col items-center gap-3">
+                <feature.icon className={`h-12 w-12 md:h-16 md:w-16 text-orange-400 ${feature.anim}`} strokeWidth={2} />
+                <span className="text-base md:text-lg font-extrabold text-white text-center">{feature.title}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="bg-white py-2 md:py-3"></div>
+
+      <section className="bg-slate-900 py-4 md:py-6">
+        <div className="max-w-4xl mx-auto px-4 md:px-8">
+          <div className="flex justify-around items-center">
+            {[
+              { icon: Shield, text: 'Secure Authentication' },
+              { icon: CheckCircle2, text: 'Role-based Access' },
+              { icon: Zap, text: 'Scalable Infrastructure' },
+              { icon: Gauge, text: 'Real-time Engine' },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center gap-2">
+                <item.icon className="h-8 w-8 md:h-10 md:w-10 text-orange-400" strokeWidth={2} />
+                <span className="text-sm md:text-base font-extrabold text-white text-center">{item.text}</span>
               </div>
             ))}
           </div>
@@ -233,76 +247,78 @@ export default function LandingPage() {
 
       <InsightsSection />
 
-      <section className="py-12 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <h2 className="text-2xl md:text-4xl font-semibold text-center text-slate-900 mb-8 md:mb-12">
-            Enterprise-Ready Architecture
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
-            {[
-              { icon: Shield, text: 'Secure authentication' },
-              { icon: CheckCircle2, text: 'Role-based access control' },
-              { icon: Zap, text: 'Scalable infrastructure' },
-              { icon: Gauge, text: 'Real-time allocation engine' }
-            ].map((item, i) => (
-              <div key={i} className="flex items-center space-x-3 md:space-x-4 rounded-2xl border border-slate-200 bg-white p-4 md:p-6 shadow-sm">
-                <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-slate-100 flex-shrink-0">
-                  <item.icon className="h-5 w-5 md:h-6 md:w-6 text-slate-700" />
-                </div>
-                <span className="text-base md:text-lg font-medium text-slate-900">{item.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Our Partners Section */}
-      <section className="bg-slate-50 py-12 md:py-24">
+      <section className="bg-slate-900 py-12 md:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-8 md:mb-16">
-            <h2 className="text-2xl md:text-4xl font-semibold text-slate-900 mb-3 md:mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3 md:mb-4">
               Trusted by Industry Leaders
             </h2>
-            <p className="text-base md:text-lg text-slate-600 max-w-2xl mx-auto px-4">
-              Partnering with top manufacturers, suppliers, and technology providers to deliver excellence
+            <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto px-4">
+              Partnering with top manufacturers, suppliers, and technology providers
             </p>
           </div>
 
-          {/* Partner Logos Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-8 mb-8 md:mb-12">
-            {[
-              { name: 'Tata Steel', category: 'Manufacturing' },
-              { name: 'L&T Industries', category: 'Engineering' },
-              { name: 'Mahindra Group', category: 'Automotive' },
-              { name: 'Reliance Industries', category: 'Energy' },
-              { name: 'JSW Group', category: 'Steel & Energy' },
-              { name: 'Adani Ports', category: 'Logistics' },
-              { name: 'Bosch India', category: 'Technology' },
-              { name: 'ABB India', category: 'Automation' },
-              { name: 'Siemens India', category: 'Industrial' },
-              { name: 'Hindustan Zinc', category: 'Mining' },
-              { name: 'UltraTech Cement', category: 'Construction' },
-              { name: 'Vedanta Limited', category: 'Resources' },
-            ].map((partner, i) => (
-              <div 
-                key={i} 
-                className="group relative rounded-xl border border-slate-200 bg-white p-4 md:p-6 shadow-sm hover:shadow-lg hover:border-orange-300 transition-all duration-300 flex flex-col items-center justify-center min-h-[120px]"
-              >
-                <div className="text-center">
-                  <div className="text-xl md:text-2xl font-bold text-slate-800 mb-1 group-hover:text-orange-600 transition-colors">
-                    {partner.name.split(' ')[0].substring(0, 1)}{partner.name.split(' ')[1]?.substring(0, 1) || partner.name.substring(1, 2)}
-                  </div>
-                  <div className="text-xs md:text-sm font-semibold text-slate-900 mb-1 line-clamp-1">
-                    {partner.name}
-                  </div>
-                  <div className="text-xs text-slate-500 line-clamp-1">
-                    {partner.category}
+          {/* Sliding Partners - Row 1 (left to right) */}
+          <div className="relative mb-4 md:mb-6">
+            <div className="flex gap-4 md:gap-6 partners-slide-right">
+              {[
+                { name: 'Tata Steel', category: 'Manufacturing', symbol: '🏭' },
+                { name: 'L&T Industries', category: 'Engineering', symbol: '⚙️' },
+                { name: 'Mahindra Group', category: 'Automotive', symbol: '🚗' },
+                { name: 'Reliance Industries', category: 'Energy', symbol: '⚡' },
+                { name: 'JSW Group', category: 'Steel & Energy', symbol: '🔩' },
+                { name: 'Adani Ports', category: 'Logistics', symbol: '🚢' },
+                { name: 'Tata Steel', category: 'Manufacturing', symbol: '🏭' },
+                { name: 'L&T Industries', category: 'Engineering', symbol: '⚙️' },
+                { name: 'Mahindra Group', category: 'Automotive', symbol: '🚗' },
+                { name: 'Reliance Industries', category: 'Energy', symbol: '⚡' },
+                { name: 'JSW Group', category: 'Steel & Energy', symbol: '🔩' },
+                { name: 'Adani Ports', category: 'Logistics', symbol: '🚢' },
+              ].map((partner, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 px-5 py-4 hover:border-orange-500 transition-all duration-300 min-w-[200px]"
+                >
+                  <span className="text-2xl md:text-3xl">{partner.symbol}</span>
+                  <div>
+                    <div className="text-sm md:text-base font-bold text-white whitespace-nowrap">{partner.name}</div>
+                    <div className="text-xs text-slate-400">{partner.category}</div>
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Sliding Partners - Row 2 (right to left) */}
+          <div className="relative mb-8 md:mb-12">
+            <div className="flex gap-4 md:gap-6 partners-slide-left">
+              {[
+                { name: 'Bosch India', category: 'Technology', symbol: '💡' },
+                { name: 'ABB India', category: 'Automation', symbol: '🤖' },
+                { name: 'Siemens India', category: 'Industrial', symbol: '🔌' },
+                { name: 'Hindustan Zinc', category: 'Mining', symbol: '⛏️' },
+                { name: 'UltraTech Cement', category: 'Construction', symbol: '🏗️' },
+                { name: 'Vedanta Limited', category: 'Resources', symbol: '💎' },
+                { name: 'Bosch India', category: 'Technology', symbol: '💡' },
+                { name: 'ABB India', category: 'Automation', symbol: '🤖' },
+                { name: 'Siemens India', category: 'Industrial', symbol: '🔌' },
+                { name: 'Hindustan Zinc', category: 'Mining', symbol: '⛏️' },
+                { name: 'UltraTech Cement', category: 'Construction', symbol: '🏗️' },
+                { name: 'Vedanta Limited', category: 'Resources', symbol: '💎' },
+              ].map((partner, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 px-5 py-4 hover:border-orange-500 transition-all duration-300 min-w-[200px]"
+                >
+                  <span className="text-2xl md:text-3xl">{partner.symbol}</span>
+                  <div>
+                    <div className="text-sm md:text-base font-bold text-white whitespace-nowrap">{partner.name}</div>
+                    <div className="text-xs text-slate-400">{partner.category}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Partner Categories */}
@@ -327,15 +343,15 @@ export default function LandingPage() {
                 description: 'ERP & IoT platform integrations',
               },
             ].map((category, i) => (
-              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition text-center">
+              <div key={i} className="rounded-2xl border border-slate-700 bg-slate-800 p-6 shadow-sm hover:shadow-md hover:border-orange-500 transition-all duration-300 text-center">
                 <div className="flex justify-center mb-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-orange-100">
-                    <category.icon className="h-7 w-7 text-orange-600" />
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-orange-500/20">
+                    <category.icon className="h-7 w-7 text-orange-400" />
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-2">{category.title}</h3>
-                <div className="text-2xl font-bold text-orange-600 mb-2">{category.count}</div>
-                <p className="text-slate-600 text-sm">{category.description}</p>
+                <h3 className="text-xl font-semibold text-white mb-2">{category.title}</h3>
+                <div className="text-2xl font-bold text-orange-400 mb-2">{category.count}</div>
+                <p className="text-slate-400 text-sm">{category.description}</p>
               </div>
             ))}
           </div>

@@ -35,3 +35,67 @@
     @apply bg-slate-50 text-foreground;
   }
 }
+
+/* Feature icon animations */
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(251, 146, 60, 0)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 12px rgba(251, 146, 60, 0.6)); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes graph-rise {
+  0%, 100% { transform: scaleY(1); transform-origin: bottom; }
+  25% { transform: scaleY(0.6); transform-origin: bottom; }
+  50% { transform: scaleY(1.15); transform-origin: bottom; }
+  75% { transform: scaleY(0.85); transform-origin: bottom; }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-4px); }
+  75% { transform: translateY(2px); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-graph-rise {
+  animation: graph-rise 2.5s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Partners sliding animations */
+@keyframes slideRight {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes slideLeft {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.partners-slide-right {
+  animation: slideRight 25s linear infinite;
+}
+
+.partners-slide-left {
+  animation: slideLeft 25s linear infinite;
+}
+
+.partners-slide-right:hover,
+.partners-slide-left:hover {
+  animation-play-state: paused;
+}

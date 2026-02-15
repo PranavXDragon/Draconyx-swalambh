@@ -2,7 +2,7 @@ import { Calendar, ArrowRight } from 'lucide-react';
 
 const insights = [
   {
-    image: '/insights/insight1.jpg',
+    image: '/insights/ins1.jpg',
     title: 'Reducing Machine Downtime by 40% in Manufacturing',
     excerpt: 'How smart spare allocation helped a leading automotive manufacturer cut downtime costs significantly.',
     date: 'Feb 10, 2026',
@@ -10,7 +10,7 @@ const insights = [
     readTime: '5 min read'
   },
   {
-    image: '/insights/insight2.jpg',
+    image: '/insights/ins2.jpg',
     title: 'The Future of Industrial Logistics',
     excerpt: 'Exploring AI-driven supplier matching and predictive spare part allocation in modern factories.',
     date: 'Feb 8, 2026',
@@ -18,7 +18,7 @@ const insights = [
     readTime: '4 min read'
   },
   {
-    image: '/insights/insight3.jpg',
+    image: '/insights/ins3.jpg',
     title: 'Optimizing Delivery Routes for Emergency Parts',
     excerpt: 'Real-time route optimization algorithms that ensure fastest delivery during critical breakdowns.',
     date: 'Feb 5, 2026',

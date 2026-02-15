@@ -18,7 +18,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6 ml-0 lg:ml-64">
+    <header className="z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6 lg:px-8">
       <div className="flex-1 min-w-0">
         <h1 className="text-base md:text-lg font-semibold text-slate-900 truncate">
           Welcome back, {user?.name || 'User'}

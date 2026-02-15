@@ -59,12 +59,6 @@ export function GallerySection() {
     <section className="py-12 md:py-24 bg-slate-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="text-center mb-8 md:mb-16">
-          <h2 className="text-2xl md:text-4xl font-semibold text-slate-900">
-            See Spedly in Action
-          </h2>
-          <p className="mt-3 md:mt-4 text-base md:text-lg text-muted-foreground">
-            Explore the platform across buyer, supplier, and admin views.
-          </p>
         </div>
 
         {/* Auto-sliding + Manual scroll gallery */}
@@ -109,10 +103,6 @@ export function GallerySection() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         draggable="false"
                       />
-                    </div>
-                    <div className="p-3 sm:p-4 md:p-5">
-                      <h3 className="font-semibold text-slate-900 text-base md:text-lg">{image.title}</h3>
-                      <p className="text-xs md:text-sm text-slate-600 mt-1">Interactive platform view</p>
                     </div>
                   </div>
                 </div>
